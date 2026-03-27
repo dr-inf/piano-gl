@@ -19,7 +19,7 @@ jobs:
 
       - name: Check formatting
         run: |
-          files=$(find include src examples -type f \(. -name '*.hpp' -o -name '*.h' -o -name '*.cpp' \))
+          files=$(find include src examples -type f \( -name '*.hpp' -o -name '*.h' -o -name '*.cpp' \))
           if [ -z "$files" ]; then
             exit 0
           fi
@@ -56,7 +56,7 @@ jobs:
 
       - name: Configure (Linux/macOS)
         if: runner.os != 'Windows'
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
       - name: Build (Linux/macOS)
         if: runner.os != 'Windows'
@@ -64,7 +64,7 @@ jobs:
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
