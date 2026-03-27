@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Package ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux-x86_64
+            archive_ext: tar.gz
+            asset_dir: piano-gl-linux-x86_64
+          - os: macos-latest
+            name: macos
+            archive_ext: tar.gz
+            asset_dir: piano-gl-macos
+          - os: windows-latest
+            name: windows-x64
+            archive_ext: zip
+            asset_dir: piano-gl-windows-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev \
+            libx11-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev
+
+      - name: Configure
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --target keys keys_example --parallel
+
+      - name: Stage release bundle (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p dist/${{ matrix.asset_dir }}
+          cp build/examples/keys_example/keys_example dist/${{ matrix.asset_dir }}/
+          cp build/keys/libkeys.a dist/${{ matrix.asset_dir }}/
+          cp -R assets include dist/${{ matrix.asset_dir }}/
+          cp LICENSE THIRD_PARTY_LICENSES.md README.md USAGE.md dist/${{ matrix.asset_dir }}/
+
+      - name: Stage release bundle (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/${{ matrix.asset_dir }} | Out-Null
+          Copy-Item build/examples/keys_example/Release/keys_example.exe dist/${{ matrix.asset_dir }}/
+          Copy-Item build/keys/Release/keys.lib dist/${{ matrix.asset_dir }}/
+          Copy-Item assets,include dist/${{ matrix.asset_dir }}/ -Recurse
+          Copy-Item LICENSE,THIRD_PARTY_LICENSES.md,README.md,USAGE.md dist/${{ matrix.asset_dir }}/
+
+      - name: Archive release bundle (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: tar -czf ${{ matrix.asset_dir }}.tar.gz -C dist ${{ matrix.asset_dir }}
+
+      - name: Archive release bundle (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path dist/${{ matrix.asset_dir }} -DestinationPath ${{ matrix.asset_dir }}.zip
+
+      - name: Upload packaged artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_dir }}
+          path: ${{ matrix.asset_dir }}.${{ matrix.archive_ext }}
+
+      - name: Attach packaged artifact to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset_dir }}.${{ matrix.archive_ext }}
+
+  sbom:
+    name: SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
+
+      - name: Attach SBOM to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: sbom.json
