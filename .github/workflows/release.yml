@@ -92,6 +92,7 @@ jobs:
           path: ${{ matrix.asset_dir }}.${{ matrix.archive_ext }}
 
       - name: Attach packaged artifact to GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ matrix.asset_dir }}.${{ matrix.archive_ext }}
@@ -117,6 +118,7 @@ jobs:
           path: sbom.json
 
       - name: Attach SBOM to GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: sbom.json
