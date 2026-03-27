@@ -34,6 +34,11 @@ target_include_directories(keys
         ${CMAKE_CURRENT_BINARY_DIR}/generated
 )
 
+target_include_directories(keys SYSTEM PRIVATE
+    ${glm_SOURCE_DIR}
+    ${fastgltf_SOURCE_DIR}/include
+)
+
 target_link_libraries(keys
     PUBLIC
         glm::glm

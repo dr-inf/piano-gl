@@ -70,9 +70,11 @@ inline void log(Level level, std::string_view message) {
 
 // Convenience functions
 inline void debug(std::string_view message) {
-    #ifndef NDEBUG  // Only in debug builds
+#ifndef NDEBUG  // Only in debug builds
     log(Level::Debug, message);
-    #endif
+#else
+    (void)message;
+#endif
 }
 
 inline void info(std::string_view message) {
