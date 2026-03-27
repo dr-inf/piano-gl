@@ -8,11 +8,15 @@
 #include <fastgltf/types.hpp>
 #include <fastgltf/tools.hpp>
 
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#else
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES 1
 #endif
 #include <GL/glcorearb.h>
 #include <GL/glext.h>
+#endif
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

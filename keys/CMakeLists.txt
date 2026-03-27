@@ -41,5 +41,9 @@ target_link_libraries(keys
         OpenGL::GL
 )
 
-target_compile_options(keys PRIVATE -Wall -Wextra -Wpedantic)
+if (MSVC)
+    target_compile_options(keys PRIVATE /W4)
+else()
+    target_compile_options(keys PRIVATE -Wall -Wextra -Wpedantic)
+endif()
 target_compile_features(keys PRIVATE cxx_std_20)

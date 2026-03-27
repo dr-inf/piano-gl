@@ -37,5 +37,9 @@ target_include_directories(keys_example PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}  # For midi_player.h
 )
 
-target_compile_options(keys_example PRIVATE -Wall -Wextra -Wpedantic)
+if (MSVC)
+    target_compile_options(keys_example PRIVATE /W4)
+else()
+    target_compile_options(keys_example PRIVATE -Wall -Wextra -Wpedantic)
+endif()
 target_compile_features(keys_example PRIVATE cxx_std_20)
