@@ -10,16 +10,7 @@ FetchContent_Declare(
     GIT_TAG 3.3.9
 )
 
-set(GLAD_PROFILE "core" CACHE STRING "" FORCE)
-set(GLAD_API "gl=4.6" CACHE STRING "" FORCE)
-set(GLAD_GENERATOR "c" CACHE STRING "" FORCE)
-FetchContent_Declare(
-    glad
-    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
-    GIT_TAG v0.1.36
-)
-
-FetchContent_MakeAvailable(glfw glad)
+FetchContent_MakeAvailable(glfw)
 
 add_executable(keys_example
     main.cpp

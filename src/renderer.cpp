@@ -10,6 +10,8 @@
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
+#elif defined(_WIN32)
+#include <glad/glad.h>
 #else
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES 1

@@ -39,6 +39,8 @@ target_link_libraries(keys
         glm::glm
         fastgltf::fastgltf
         OpenGL::GL
+    PRIVATE
+        glad
 )
 
 if (MSVC)
