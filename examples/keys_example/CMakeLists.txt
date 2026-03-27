@@ -1,0 +1,36 @@
+include(FetchContent)
+
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG 3.3.9
+)
+
+FetchContent_MakeAvailable(glfw)
+
+add_executable(keys_example
+    main.cpp
+    midi_player.cpp
+)
+
+target_link_libraries(keys_example
+    PRIVATE
+        keys
+        glad
+        glfw
+)
+
+target_include_directories(keys_example PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}  # For midi_player.h
+)
+
+if (MSVC)
+    target_compile_options(keys_example PRIVATE /W4)
+else()
+    target_compile_options(keys_example PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+target_compile_features(keys_example PRIVATE cxx_std_20)
