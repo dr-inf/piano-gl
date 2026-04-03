@@ -73,41 +73,41 @@ namespace fs = std::filesystem;
 
 namespace keys {
 
-constexpr float CAMERA_DISTANCE_SCALE    = 0.6f;
-constexpr float CAMERA_HEIGHT_RATIO      = 0.35f;
+constexpr float CAMERA_DISTANCE_SCALE = 0.6f;
+constexpr float CAMERA_HEIGHT_RATIO = 0.35f;
 constexpr float KEYBOARD_SPATIAL_PADDING = 1.05f;
-constexpr float SHADOW_BIAS              = 0.00005f;
-constexpr float LIGHT_INTENSITY          = 5.0f;
-constexpr float ENVIRONMENT_INTENSITY    = 0.5f;
+constexpr float SHADOW_BIAS = 0.00005f;
+constexpr float LIGHT_INTENSITY = 5.0f;
+constexpr float ENVIRONMENT_INTENSITY = 0.5f;
 
 struct TextureCache {
     std::unordered_map<std::size_t, GLuint> imageTextures;
-    GLuint white          = 0;
-    GLuint mrrDefault     = 0;
-    GLuint normalDefault  = 0;
+    GLuint white = 0;
+    GLuint mrrDefault = 0;
+    GLuint normalDefault = 0;
     GLuint emissiveDefault = 0;
-    GLuint envMap         = 0;
+    GLuint envMap = 0;
 };
 
 struct MaterialGPU {
     GLuint baseColorTex = 0;
-    GLuint mrTex        = 0;
-    GLuint normalTex    = 0;
-    GLuint emissiveTex  = 0;
+    GLuint mrTex = 0;
+    GLuint normalTex = 0;
+    GLuint emissiveTex = 0;
     glm::vec4 baseColorFactor{1.0f};
-    float metallicFactor  = 1.0f;
+    float metallicFactor = 1.0f;
     float roughnessFactor = 1.0f;
     glm::vec3 emissiveFactor{0.0f};
     bool doubleSided = false;
-    bool unlit       = false;
+    bool unlit = false;
 };
 
 struct PrimitiveGPU {
-    GLuint vao        = 0;
-    GLuint vbo        = 0;
-    GLuint ebo        = 0;
+    GLuint vao = 0;
+    GLuint vbo = 0;
+    GLuint ebo = 0;
     GLsizei indexCount = 0;
-    GLenum mode       = GL_TRIANGLES;
+    GLenum mode = GL_TRIANGLES;
     MaterialGPU material;
     glm::vec3 aabbMin{0.0f};
     glm::vec3 aabbMax{0.0f};
@@ -125,18 +125,18 @@ struct DrawCommand {
 struct SceneCamera {
     glm::mat4 world{1.0f};
     glm::mat4 view{1.0f};
-    float yfov  = glm::radians(50.0f);
+    float yfov = glm::radians(50.0f);
     float znear = 0.01f;
-    float zfar  = 1000.0f;
+    float zfar = 1000.0f;
     std::optional<float> aspect;
     bool valid = false;
 };
 
 struct InstanceInfo {
-    GLuint vbo          = 0;
-    GLuint rotationVbo  = 0;
+    GLuint vbo = 0;
+    GLuint rotationVbo = 0;
     GLintptr rotationOffset = 0;
-    GLsizei count       = 0;
+    GLsizei count = 0;
     GLsizei strideBytes = 0;
 };
 
@@ -148,69 +148,69 @@ struct KeyRotationBuffer {
 };
 
 struct KeyAnimation {
-    int midiPitch   = -1;
-    float start     = 0.0f;
-    float target    = 0.0f;
-    float duration  = 0.0f;
-    float elapsed   = 0.0f;
-    EaseType ease   = EaseType::Back;
+    int midiPitch = -1;
+    float start = 0.0f;
+    float target = 0.0f;
+    float duration = 0.0f;
+    float elapsed = 0.0f;
+    EaseType ease = EaseType::Back;
 };
 
 struct KeyMapping {
     bool isWhite = true;
-    int index    = 0;
+    int index = 0;
 };
 
 struct GLProgram {
-    GLuint id           = 0;
-    GLint locModel      = -1;
-    GLint locView       = -1;
-    GLint locProj       = -1;
-    GLint locLightVP    = -1;
-    GLint locNormalMat  = -1;
-    GLint locCamPos     = -1;
-    GLint locBaseColor  = -1;
-    GLint locMetallic   = -1;
-    GLint locRoughness  = -1;
-    GLint locEmissive   = -1;
-    GLint locUnlit      = -1;
-    GLint locDarken     = -1;
-    GLint locEnvMap     = -1;
+    GLuint id = 0;
+    GLint locModel = -1;
+    GLint locView = -1;
+    GLint locProj = -1;
+    GLint locLightVP = -1;
+    GLint locNormalMat = -1;
+    GLint locCamPos = -1;
+    GLint locBaseColor = -1;
+    GLint locMetallic = -1;
+    GLint locRoughness = -1;
+    GLint locEmissive = -1;
+    GLint locUnlit = -1;
+    GLint locDarken = -1;
+    GLint locEnvMap = -1;
     GLint locEnvIntensity = -1;
-    GLint locEnvRot     = -1;
-    GLint locShadowMap  = -1;
+    GLint locEnvRot = -1;
+    GLint locShadowMap = -1;
     GLint locShadowBias = -1;
     GLint locShadowDebug = -1;
     GLint locGroundNormal = -1;
-    GLint locGroundPoint  = -1;
+    GLint locGroundPoint = -1;
     GLint locGroundParams = -1;
 };
 
 struct SkyboxProgram {
-    GLuint id       = 0;
-    GLint locView   = -1;
-    GLint locProj   = -1;
+    GLuint id = 0;
+    GLint locView = -1;
+    GLint locProj = -1;
     GLint locCubemap = -1;
     GLint locEnvRot = -1;
 };
 
 struct CaptureProgram {
-    GLuint id        = 0;
-    GLint locView    = -1;
-    GLint locProj    = -1;
+    GLuint id = 0;
+    GLint locView = -1;
+    GLint locProj = -1;
     GLint locEquirect = -1;
 };
 
 struct ShadowProgram {
-    GLuint id        = 0;
-    GLint locModel   = -1;
+    GLuint id = 0;
+    GLint locModel = -1;
     GLint locLightVP = -1;
 };
 
 struct ShadowMap {
-    GLuint fbo      = 0;
+    GLuint fbo = 0;
     GLuint depthTex = 0;
-    int size        = 4096;
+    int size = 4096;
     glm::mat4 lightVP{1.0f};
 };
 
@@ -230,9 +230,9 @@ struct SceneGPU {
     glm::vec3 sceneMax{0.0f};
     SceneCamera camera{};
     std::optional<std::size_t> backPlaneMeshIndex;
-    std::optional<glm::mat4>   backPlaneModel;
-    std::optional<glm::vec3>   backPlaneNormalWS;
-    std::optional<glm::vec3>   backPlanePointWS;
+    std::optional<glm::mat4> backPlaneModel;
+    std::optional<glm::vec3> backPlaneNormalWS;
+    std::optional<glm::vec3> backPlanePointWS;
     std::optional<std::size_t> baseMeshIndex;
     GLuint envMap = 0;
     std::unordered_map<std::size_t, InstanceInfo> instancedMeshes;
@@ -245,7 +245,7 @@ struct SceneGPU {
 
 struct KeyboardBounds {
     float centerZ = 0.0f;
-    float spanZ   = 1.0f;
+    float spanZ = 1.0f;
 };
 
 struct LoadedGltf {
@@ -260,19 +260,19 @@ struct CameraState {
 };
 
 GLuint compileShader(GLenum type, std::string_view src, std::string_view name);
-GLuint createProgram(std::string_view vertSrc, std::string_view fragSrc,
-                     std::string_view vertName, std::string_view fragName);
-GLProgram      createPbrProgram(std::string_view vertSrc, std::string_view fragSrc);
-SkyboxProgram  createSkyboxProgram(std::string_view vertSrc, std::string_view fragSrc);
+GLuint createProgram(std::string_view vertSrc, std::string_view fragSrc, std::string_view vertName,
+                     std::string_view fragName);
+GLProgram createPbrProgram(std::string_view vertSrc, std::string_view fragSrc);
+SkyboxProgram createSkyboxProgram(std::string_view vertSrc, std::string_view fragSrc);
 CaptureProgram createCaptureProgram(std::string_view vertSrc, std::string_view fragSrc);
-ShadowProgram  createShadowProgram(std::string_view vertSrc, std::string_view fragSrc);
+ShadowProgram createShadowProgram(std::string_view vertSrc, std::string_view fragSrc);
 
 InstanceInfo createWhiteKeyInstanceBuffer(GLuint rotationVbo, GLintptr rotationOffsetBytes);
 InstanceInfo createBlackKeyInstanceBuffer(GLuint rotationVbo, GLintptr rotationOffsetBytes);
 void bindInstanceAttributes(GLuint vao, const InstanceInfo &inst);
 KeyRotationBuffer createKeyRotationBuffer();
 std::array<std::optional<KeyMapping>, 128> buildPitchToKeyMapping();
-int  rotationIndexForKey(bool isWhite, int keyIndex);
+int rotationIndexForKey(bool isWhite, int keyIndex);
 void setKeyRotation(SceneGPU &scene, int midiPitch, float radians);
 void uploadKeyRotations(SceneGPU &scene);
 float getKeyRotation(const SceneGPU &scene, int midiPitch);
@@ -281,27 +281,25 @@ void midiNoteOn(SceneGPU &scene, int midiPitch);
 void midiNoteOff(SceneGPU &scene, int midiPitch);
 void updateAnimations(SceneGPU &scene, float dt);
 
-GLuint createTexture2D(int width, int height, GLint internalFormat, GLenum format,
-                       const void *data, bool generateMips = true);
+GLuint createTexture2D(int width, int height, GLint internalFormat, GLenum format, const void *data,
+                       bool generateMips = true);
 GLuint createFallbackTexture(glm::vec4 color, bool srgb = false);
 GLuint createFallbackCubemap(glm::vec3 color);
-GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
-                                    GLuint skyboxVAO, const CaptureProgram &captureProg);
+GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size, GLuint skyboxVAO,
+                                    const CaptureProgram &captureProg);
 
 std::optional<LoadedGltf> loadGltfAsset(const fs::path &gltfPath);
 void printAssetSummary(const fastgltf::Asset &asset, const fs::path &gltfPath);
-SceneGPU buildSceneGPU(const fastgltf::Asset &asset, const fs::path &basePath,
-                        TextureCache &texCache, fastgltf::DefaultBufferDataAdapter &adapter);
+SceneGPU buildSceneGPU(const fastgltf::Asset &asset, const fs::path &basePath, TextureCache &texCache,
+                       fastgltf::DefaultBufferDataAdapter &adapter);
 
-CameraState computeViewProj(const SceneGPU &scene, float aspect, float t,
-                             bool useKeyboardCamera, bool useMovingCamera);
+CameraState computeViewProj(const SceneGPU &scene, float aspect, float t, bool useKeyboardCamera, bool useMovingCamera);
 glm::vec3 computeSwayedLightDir(float t);
-GLuint    createSkyboxVAO();
+GLuint createSkyboxVAO();
 ShadowMap createShadowMap(int size);
 LightViewData computeLightView(const SceneGPU &scene, const glm::vec3 &lightDir, int shadowMapSize);
-void renderFrame(SceneGPU &scene, const GLProgram &pbrProgram,
-                 const SkyboxProgram &skyboxProgram, const ShadowProgram &shadowProgram,
-                 ShadowMap &shadowMap, GLuint skyboxVAO, const FrameParams &frame,
+void renderFrame(SceneGPU &scene, const GLProgram &pbrProgram, const SkyboxProgram &skyboxProgram,
+                 const ShadowProgram &shadowProgram, ShadowMap &shadowMap, GLuint skyboxVAO, const FrameParams &frame,
                  bool useMovingCamera, bool useKeyboardCamera);
 
 } // namespace keys

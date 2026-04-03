@@ -8,7 +8,7 @@ namespace keys {
 InstanceInfo createWhiteKeyInstanceBuffer(GLuint rotationVbo, GLintptr rotationOffsetBytes) {
     InstanceInfo info{};
     glGenBuffers(1, &info.vbo);
-    info.count       = static_cast<GLsizei>(kWhiteKeys.size());
+    info.count = static_cast<GLsizei>(kWhiteKeys.size());
     info.strideBytes = static_cast<GLsizei>(3 * sizeof(float));
     info.rotationVbo = rotationVbo;
     info.rotationOffset = rotationOffsetBytes;
@@ -31,7 +31,7 @@ InstanceInfo createWhiteKeyInstanceBuffer(GLuint rotationVbo, GLintptr rotationO
 InstanceInfo createBlackKeyInstanceBuffer(GLuint rotationVbo, GLintptr rotationOffsetBytes) {
     InstanceInfo info{};
     glGenBuffers(1, &info.vbo);
-    info.count       = static_cast<GLsizei>(kBlackKeys.size());
+    info.count = static_cast<GLsizei>(kBlackKeys.size());
     info.strideBytes = static_cast<GLsizei>(1 * sizeof(float));
     info.rotationVbo = rotationVbo;
     info.rotationOffset = rotationOffsetBytes;
@@ -49,8 +49,7 @@ void bindInstanceAttributes(GLuint vao, const InstanceInfo &inst) {
         glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, inst.strideBytes, reinterpret_cast<void *>(0));
         glVertexAttribDivisor(5, 1);
         glEnableVertexAttribArray(6);
-        glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, inst.strideBytes,
-                              reinterpret_cast<void *>(2 * sizeof(float)));
+        glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, inst.strideBytes, reinterpret_cast<void *>(2 * sizeof(float)));
         glVertexAttribDivisor(6, 1);
     } else {
         // Black keys: center only
@@ -63,8 +62,7 @@ void bindInstanceAttributes(GLuint vao, const InstanceInfo &inst) {
     if (inst.rotationVbo != 0) {
         glBindBuffer(GL_ARRAY_BUFFER, inst.rotationVbo);
         glEnableVertexAttribArray(7);
-        glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, sizeof(float),
-                              reinterpret_cast<void *>(inst.rotationOffset));
+        glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, sizeof(float), reinterpret_cast<void *>(inst.rotationOffset));
         glVertexAttribDivisor(7, 1);
     } else {
         glDisableVertexAttribArray(7);
@@ -86,9 +84,9 @@ std::array<std::optional<KeyMapping>, 128> buildPitchToKeyMapping() {
     int whiteIdx = 0;
     int blackIdx = 0;
     constexpr int kFirstMidi = 21;
-    constexpr int kLastMidi  = kFirstMidi + 87;
+    constexpr int kLastMidi = kFirstMidi + 87;
     for (int pitch = kFirstMidi; pitch <= kLastMidi && pitch < static_cast<int>(map.size()); ++pitch) {
-        int mod     = pitch % 12;
+        int mod = pitch % 12;
         bool isBlack = (mod == 1 || mod == 3 || mod == 6 || mod == 8 || mod == 10);
         if (isBlack) {
             if (blackIdx < static_cast<int>(kBlackKeys.size()))
@@ -99,8 +97,8 @@ std::array<std::optional<KeyMapping>, 128> buildPitchToKeyMapping() {
         }
     }
     if (whiteIdx != static_cast<int>(kWhiteKeys.size()) || blackIdx != static_cast<int>(kBlackKeys.size())) {
-        log::warning(log::format("[KeyMap] Warning: mismatched key counts. white=", whiteIdx, "/",
-                                 kWhiteKeys.size(), " black=", blackIdx, "/", kBlackKeys.size()));
+        log::warning(log::format("[KeyMap] Warning: mismatched key counts. white=", whiteIdx, "/", kWhiteKeys.size(),
+                                 " black=", blackIdx, "/", kBlackKeys.size()));
     }
     return map;
 }
@@ -126,9 +124,7 @@ void uploadKeyRotations(SceneGPU &scene) {
     if (scene.keyRotations.vbo == 0 || scene.keyRotations.data.empty())
         return;
     glBindBuffer(GL_ARRAY_BUFFER, scene.keyRotations.vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0,
-                    scene.keyRotations.data.size() * sizeof(float),
-                    scene.keyRotations.data.data());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, scene.keyRotations.data.size() * sizeof(float), scene.keyRotations.data.data());
     scene.keyRotationsDirty = false;
 }
 
@@ -158,7 +154,7 @@ KeyboardBounds computeKeyboardBounds() {
     KeyboardBounds b{};
     float center = (minCenter + maxCenter) * 0.5f;
     b.centerZ = -0.01f * center;
-    b.spanZ   = 0.01f * (maxCenter - minCenter) + 0.5f;
+    b.spanZ = 0.01f * (maxCenter - minCenter) + 0.5f;
     return b;
 }
 
@@ -170,8 +166,10 @@ static float easeOutBack(float t) {
 }
 
 static float easeOutElastic(float t) {
-    if (t == 0.0f) return 0.0f;
-    if (t == 1.0f) return 1.0f;
+    if (t == 0.0f)
+        return 0.0f;
+    if (t == 1.0f)
+        return 1.0f;
     const float c4 = (2.0f * 3.14159265f) / 3.0f;
     return std::pow(2.0f, -10.0f * t) * std::sin((t * 10.0f - 0.75f) * c4) + 1.0f;
 }
@@ -182,18 +180,17 @@ static void startAnimation(SceneGPU &scene, int midiPitch, float target, float d
     if (!scene.pitchToKey[midiPitch])
         return;
 
-    scene.animations.erase(
-        std::remove_if(scene.animations.begin(), scene.animations.end(),
-                       [&](const KeyAnimation &a) { return a.midiPitch == midiPitch; }),
-        scene.animations.end());
+    scene.animations.erase(std::remove_if(scene.animations.begin(), scene.animations.end(),
+                                          [&](const KeyAnimation &a) { return a.midiPitch == midiPitch; }),
+                           scene.animations.end());
 
     KeyAnimation anim{};
     anim.midiPitch = midiPitch;
-    anim.start     = getKeyRotation(scene, midiPitch);
-    anim.target    = target;
-    anim.duration  = duration;
-    anim.elapsed   = 0.0f;
-    anim.ease      = ease;
+    anim.start = getKeyRotation(scene, midiPitch);
+    anim.target = target;
+    anim.duration = duration;
+    anim.elapsed = 0.0f;
+    anim.ease = ease;
     scene.animations.push_back(anim);
 }
 
@@ -218,14 +215,13 @@ void updateAnimations(SceneGPU &scene, float dt) {
         return;
     for (auto &anim : scene.animations) {
         anim.elapsed += dt;
-        float t     = anim.duration > 0.0f ? glm::clamp(anim.elapsed / anim.duration, 0.0f, 1.0f) : 1.0f;
+        float t = anim.duration > 0.0f ? glm::clamp(anim.elapsed / anim.duration, 0.0f, 1.0f) : 1.0f;
         float eased = (anim.ease == EaseType::Back) ? easeOutBack(t) : easeOutElastic(t);
         setKeyRotation(scene, anim.midiPitch, anim.start + (anim.target - anim.start) * eased);
     }
-    scene.animations.erase(
-        std::remove_if(scene.animations.begin(), scene.animations.end(),
-                       [](const KeyAnimation &a) { return a.elapsed >= a.duration; }),
-        scene.animations.end());
+    scene.animations.erase(std::remove_if(scene.animations.begin(), scene.animations.end(),
+                                          [](const KeyAnimation &a) { return a.elapsed >= a.duration; }),
+                           scene.animations.end());
 }
 
 } // namespace keys

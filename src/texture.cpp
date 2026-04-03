@@ -8,15 +8,14 @@
 
 namespace keys {
 
-GLuint createTexture2D(int width, int height, GLint internalFormat, GLenum format,
-                       const void *data, bool generateMips) {
+GLuint createTexture2D(int width, int height, GLint internalFormat, GLenum format, const void *data,
+                       bool generateMips) {
     GLuint tex = 0;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    generateMips ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, generateMips ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     if (generateMips)
@@ -25,26 +24,23 @@ GLuint createTexture2D(int width, int height, GLint internalFormat, GLenum forma
 }
 
 GLuint createFallbackTexture(glm::vec4 color, bool srgb) {
-    std::array<unsigned char, 4> px{
-        static_cast<unsigned char>(glm::clamp(color.r, 0.0f, 1.0f) * 255.0f),
-        static_cast<unsigned char>(glm::clamp(color.g, 0.0f, 1.0f) * 255.0f),
-        static_cast<unsigned char>(glm::clamp(color.b, 0.0f, 1.0f) * 255.0f),
-        static_cast<unsigned char>(glm::clamp(color.a, 0.0f, 1.0f) * 255.0f)};
+    std::array<unsigned char, 4> px{static_cast<unsigned char>(glm::clamp(color.r, 0.0f, 1.0f) * 255.0f),
+                                    static_cast<unsigned char>(glm::clamp(color.g, 0.0f, 1.0f) * 255.0f),
+                                    static_cast<unsigned char>(glm::clamp(color.b, 0.0f, 1.0f) * 255.0f),
+                                    static_cast<unsigned char>(glm::clamp(color.a, 0.0f, 1.0f) * 255.0f)};
     GLint internalFormat = srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
     return createTexture2D(1, 1, internalFormat, GL_RGBA, px.data(), false);
 }
 
 GLuint createFallbackCubemap(glm::vec3 color) {
-    std::array<unsigned char, 3> px{
-        static_cast<unsigned char>(glm::clamp(color.r, 0.0f, 1.0f) * 255.0f),
-        static_cast<unsigned char>(glm::clamp(color.g, 0.0f, 1.0f) * 255.0f),
-        static_cast<unsigned char>(glm::clamp(color.b, 0.0f, 1.0f) * 255.0f)};
+    std::array<unsigned char, 3> px{static_cast<unsigned char>(glm::clamp(color.r, 0.0f, 1.0f) * 255.0f),
+                                    static_cast<unsigned char>(glm::clamp(color.g, 0.0f, 1.0f) * 255.0f),
+                                    static_cast<unsigned char>(glm::clamp(color.b, 0.0f, 1.0f) * 255.0f)};
     GLuint tex = 0;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     for (int face = 0; face < 6; ++face) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB8, 1, 1, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, px.data());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB8, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, px.data());
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -54,8 +50,8 @@ GLuint createFallbackCubemap(glm::vec3 color) {
     return tex;
 }
 
-GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
-                                    GLuint skyboxVAO, const CaptureProgram &captureProg) {
+GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size, GLuint skyboxVAO,
+                                    const CaptureProgram &captureProg) {
     stbi_set_flip_vertically_on_load(false);
     int w = 0, h = 0, comp = 0;
     float *data = stbi_loadf(hdrPath.c_str(), &w, &h, &comp, 3);
@@ -78,8 +74,7 @@ GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
     glGenTextures(1, &cubeTex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
     for (int i = 0; i < 6; ++i) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0,
-                     GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, size, size, 0, GL_RGB, GL_FLOAT, nullptr);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -97,8 +92,7 @@ GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-        log::error(log::format("Framebuffer incomplete for equirect conversion: 0x",
-                               std::hex, status, std::dec));
+        log::error(log::format("Framebuffer incomplete for equirect conversion: 0x", std::hex, status, std::dec));
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteTextures(1, &hdrTex);
         glDeleteTextures(1, &cubeTex);
@@ -109,12 +103,12 @@ GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
 
     glm::mat4 captureProj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
     glm::mat4 captureViews[6] = {
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3( 1,  0,  0), glm::vec3(0, -1,  0)),
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(-1,  0,  0), glm::vec3(0, -1,  0)),
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3( 0,  1,  0), glm::vec3(0,  0,  1)),
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3( 0, -1,  0), glm::vec3(0,  0, -1)),
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3( 0,  0,  1), glm::vec3(0, -1,  0)),
-        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3( 0,  0, -1), glm::vec3(0, -1,  0)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
+        glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)),
     };
 
     glUseProgram(captureProg.id);
@@ -126,8 +120,7 @@ GLuint loadEquirectangularAsCubemap(const std::string &hdrPath, int size,
     for (int i = 0; i < 6; ++i) {
         glUniformMatrix4fv(captureProg.locView, 1, GL_FALSE, glm::value_ptr(captureViews[i]));
         glUniformMatrix4fv(captureProg.locProj, 1, GL_FALSE, glm::value_ptr(captureProj));
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubeTex, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubeTex, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
