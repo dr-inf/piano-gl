@@ -15,7 +15,7 @@ A ready-to-use, high-performance C++ library for realistic 3D piano rendering an
 
 - **Highly Efficient Rendering**
   - Modern OpenGL 3.3+ with instanced rendering
-  - Only 2 parametric key models for all 88 keys (white + black)
+  - Only 2 parametric key models and 2 instanced draw calls for all 88 keys (white + black)
   - GPU-driven animation with per-instance transforms
   - Shadow mapping with configurable resolution
 
@@ -26,7 +26,7 @@ A ready-to-use, high-performance C++ library for realistic 3D piano rendering an
   - Reflection rendering on base plane
 
 - **Simple Integration**
-  - Header-only library with clean C++20 API
+  - Static library with clean C++17 API
   - CMake build system with automatic dependency management
   - Cross-platform: Linux, macOS, Windows
   - Example application included
@@ -39,6 +39,26 @@ A ready-to-use, high-performance C++ library for realistic 3D piano rendering an
 - **CMake** 3.21 or newer
 - **Python 3** (for shader embedding during build)
 - **OpenGL 3.3+** capable graphics hardware
+
+### Integration
+
+Add to your CMake project via FetchContent:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(keys
+    GIT_REPOSITORY https://github.com/dr-inf/piano-gl.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(keys)
+
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE keys)
+```
+
+All dependencies (fastgltf, GLM, stb_image) are fetched automatically. You only need to provide an OpenGL context — piano-gl does not create a window.
+
+For detailed integration instructions see [USAGE.md](USAGE.md).
 
 ### Building
 
@@ -139,6 +159,9 @@ cmake --build build
 
 ### Basic Example
 
+<details>
+<summary>Show full example</summary>
+
 ```cpp
 #include <keys/renderer.hpp>
 #include <GLFW/glfw3.h>
@@ -186,6 +209,8 @@ int main() {
 }
 ```
 
+</details>
+
 ### Animating Keys
 
 ```cpp
@@ -232,7 +257,13 @@ keys/
 ├── include/keys/                     # Public API
 │   └── renderer.hpp                  # Main renderer interface
 ├── src/                              # Implementation
-│   ├── renderer.cpp                  # Renderer implementation (~1700 lines)
+│   ├── renderer.cpp                  # Public API
+│   ├── render_passes.cpp             # Camera, shadow, skybox, frame rendering
+│   ├── gltf_loader.cpp               # glTF/asset loading
+│   ├── key_animation.cpp             # Key instancing and animation
+│   ├── texture.cpp                   # Texture creation and HDR loading
+│   ├── shader_utils.cpp              # Shader compilation
+│   ├── renderer_internal.hpp         # Internal structs and forward declarations
 │   ├── log.hpp                       # Unified logging system
 │   └── keys.hpp                      # MIDI note to key mapping
 ├── shaders/                          # GLSL shaders (embedded at build time)
@@ -296,35 +327,6 @@ All included assets are freely licensed:
 - **HDR Environment**: "Mirrored Hall" from [Polyhaven](https://polyhaven.com/a/mirrored_hall), CC0 Public Domain
 
 See [assets/README.md](assets/README.md) for details and how to use custom assets.
-
-## Integration Guide
-
-For detailed integration instructions, see [USAGE.md](USAGE.md).
-
-Quick integration via CMake:
-
-```cmake
-# Add as subdirectory
-add_subdirectory(external/keys)
-
-# Your executable
-add_executable(my_app main.cpp)
-target_link_libraries(my_app PRIVATE keys)
-```
-
-Or via FetchContent:
-
-```cmake
-include(FetchContent)
-FetchContent_Declare(keys
-    GIT_REPOSITORY https://github.com/dr-inf/piano-gl.git
-    GIT_TAG main
-)
-FetchContent_MakeAvailable(keys)
-
-add_executable(my_app main.cpp)
-target_link_libraries(my_app PRIVATE keys)
-```
 
 ## Contributing
 

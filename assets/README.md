@@ -84,32 +84,6 @@ blender piano.blend
 
 The glTF model is used by the library, while `piano.blend` is kept as the editable source.
 
-### Replacing the Environment Map
-
-To use a different HDR environment map from Polyhaven:
-
-1. Browse [Polyhaven HDRIs](https://polyhaven.com/hdris) (all CC0)
-2. Download your chosen HDR (2K or 4K resolution recommended)
-3. Replace the file in `assets/env/`
-4. Update `InitParams.envHdrPath` in your code
-5. Update this README with the new asset name and source
-
-**Example:**
-```bash
-# Download "Studio Small 09" from Polyhaven (CC0)
-wget https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/studio_small_09_2k.hdr \
-  -O assets/env/studio_small_09_2k.hdr
-
-# Update your code:
-params.envHdrPath = "assets/env/studio_small_09_2k.hdr";
-```
-
-**Popular Polyhaven HDRs for piano scenes:**
-- [Studio Small 09](https://polyhaven.com/a/studio_small_09) - Clean studio lighting
-- [Wooden Door](https://polyhaven.com/a/wooden_door) - Warm interior ambiance
-- [Aristea Wreck Puresky](https://polyhaven.com/a/aristea_wreck_puresky) - Outdoor lighting
-- [Photo Studio 01](https://polyhaven.com/a/photo_studio_01) - Professional studio setup
-
 ## License Summary
 
 | Asset | License | Source |
