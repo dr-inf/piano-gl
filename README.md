@@ -35,7 +35,7 @@ A ready-to-use, high-performance C++ library for realistic 3D piano rendering an
 
 ### Prerequisites
 
-- **C++20 compatible compiler** (GCC 11+, Clang 14+, MSVC 2019+)
+- **C++17 compatible compiler** (GCC 9+, Clang 8+, MSVC 2017+)
 - **CMake** 3.21 or newer
 - **Python 3** (for shader embedding during build)
 - **OpenGL 3.3+** capable graphics hardware

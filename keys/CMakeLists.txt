@@ -20,6 +20,11 @@ add_custom_target(keys_shaders DEPENDS ${GENERATED_SHADER_HEADER})
 
 add_library(keys STATIC
     ${PROJECT_SOURCE_DIR}/src/renderer.cpp
+    ${PROJECT_SOURCE_DIR}/src/shader_utils.cpp
+    ${PROJECT_SOURCE_DIR}/src/key_animation.cpp
+    ${PROJECT_SOURCE_DIR}/src/texture.cpp
+    ${PROJECT_SOURCE_DIR}/src/gltf_loader.cpp
+    ${PROJECT_SOURCE_DIR}/src/render_passes.cpp
     ${GENERATED_SHADER_HEADER}
 )
 
@@ -53,4 +58,4 @@ if (MSVC)
 else()
     target_compile_options(keys PRIVATE -Wall -Wextra -Wpedantic)
 endif()
-target_compile_features(keys PRIVATE cxx_std_20)
+target_compile_features(keys PRIVATE cxx_std_17)
